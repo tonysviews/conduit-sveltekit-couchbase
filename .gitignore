@@ -4,3 +4,4 @@
 /.netlify
 /.svelte-kit
 /.vercel
+.env
