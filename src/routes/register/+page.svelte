@@ -1,6 +1,6 @@
 <script>
 	import { enhance } from '$app/forms';
-	import ListErrors from '$lib/ListErrors.svelte';
+	import ListErrors from '$lib/components/ListErrors.svelte';
 
 	/** @type {import('./$types').ActionData} */
 	export let form;

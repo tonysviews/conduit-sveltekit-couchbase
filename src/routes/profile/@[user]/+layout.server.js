@@ -1,7 +1,7 @@
-import * as api from '$lib/api.js';
+import API from '$lib/api.js';
 
-export async function load({ locals, params }) {
-	const { profile } = await api.get(`profiles/${params.user}`, locals.user?.token);
+export async function load({ fetch, locals, params }) {
+	const { profile } = await API(fetch).get(`profiles/${params.user}`, locals.user?.token);
 
 	return {
 		profile

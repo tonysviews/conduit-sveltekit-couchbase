@@ -1,21 +1,21 @@
 import { error, redirect } from '@sveltejs/kit';
-import * as api from '$lib/api.js';
+import API from '$lib/api.js';
 
-export async function load({ locals, params }) {
+export async function load({ fetch, locals, params }) {
 	if (!locals.user) redirect(302, `/login`);
 
-	const { article } = await api.get(`articles/${params.slug}`, locals.user.token);
+	const { article } = await API(fetch).get(`articles/${params.slug}`, locals.user.token);
 	return { article };
 }
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-	default: async ({ locals, params, request }) => {
+	default: async ({ fetch, locals, params, request }) => {
 		if (!locals.user) error(401);
 
 		const data = await request.formData();
 
-		const result = await api.put(
+		const result = await API(fetch).put(
 			`articles/${params.slug}`,
 			{
 				article: {

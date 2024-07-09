@@ -2,7 +2,7 @@
 	import { scale } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { enhance } from '$app/forms';
-	import ListErrors from '$lib/ListErrors.svelte';
+	import ListErrors from '$lib/components/ListErrors.svelte';
 
 	export let article;
 	export let errors;

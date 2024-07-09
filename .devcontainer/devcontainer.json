@@ -1,0 +1,28 @@
+{
+  "name": "SvelteKit & Couchbase Dev Container",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "conduit-app",
+  "workspaceFolder": "/workspace",
+
+  "features": {},
+
+  "forwardPorts": [5173, 24678, 8091, 8092, 8093, 8094, 8095, 8096, 11210],
+
+  "postCreateCommand": "npm install",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "svelte.svelte-vscode",
+        "dbaeumer.vscode-eslint",
+        "couchbase.vscode-couchbase",
+        "YoavBls.pretty-ts-errors",
+        "ms-vscode.vscode-typescript-next",
+        "esbenp.prettier-vscode",
+        "rangav.vscode-thunder-client"
+      ]
+    }
+  },
+
+  "remoteUser": "node"
+}

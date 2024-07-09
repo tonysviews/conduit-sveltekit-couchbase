@@ -1,5 +1,5 @@
 /** @type {import('./$types').LayoutServerLoad} */
-export function load({ locals }) {
+export const load = async ({ locals }) => {
 	return {
 		user: locals.user && {
 			username: locals.user.username,
@@ -8,4 +8,4 @@ export function load({ locals }) {
 			bio: locals.user.bio
 		}
 	};
-}
+};

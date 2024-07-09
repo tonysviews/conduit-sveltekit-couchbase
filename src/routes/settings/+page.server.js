@@ -1,5 +1,5 @@
 import { error, fail, redirect } from '@sveltejs/kit';
-import * as api from '$lib/api.js';
+import API from '$lib/api.js';
 
 export function load({ locals }) {
 	if (!locals.user) redirect(302, '/login');
@@ -12,7 +12,7 @@ export const actions = {
 		locals.user = null;
 	},
 
-	save: async ({ cookies, locals, request }) => {
+	save: async ({ fetch, cookies, locals, request }) => {
 		if (!locals.user) error(401);
 
 		const data = await request.formData();
@@ -25,7 +25,7 @@ export const actions = {
 			bio: data.get('bio')
 		};
 
-		const body = await api.put('user', { user }, locals.user.token);
+		const body = await API(fetch).put('user', { user }, locals.user.token);
 		if (body.errors) return fail(400, body.errors);
 
 		const value = btoa(JSON.stringify(body.user));

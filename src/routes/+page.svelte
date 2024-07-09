@@ -1,6 +1,6 @@
 <script>
 	import { page } from '$app/stores';
-	import ArticleList from '$lib/ArticleList/index.svelte';
+	import ArticleList from '$lib/components/ArticleList/index.svelte';
 	import Pagination from './Pagination.svelte';
 
 	/** @type {import('./$types').PageData} */

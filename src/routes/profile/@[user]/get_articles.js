@@ -1,7 +1,7 @@
-import * as api from '$lib/api.js';
+import API from '$lib/api.js';
 import { page_size } from '$lib/constants.js';
 
-export async function get_articles({ url, params, locals }, type) {
+export async function get_articles({ fetch, url, params, locals }, type) {
 	const p = +url.searchParams.get('page') || 1;
 
 	const q = new URLSearchParams();
@@ -9,7 +9,7 @@ export async function get_articles({ url, params, locals }, type) {
 	q.set('offset', (p - 1) * page_size);
 	q.set(type, params.user);
 
-	const { articles, articlesCount } = await api.get(
+	const { articles, articlesCount } = await API(fetch).get(
 		`articles?${q}`,
 		locals.user && locals.user.token
 	);

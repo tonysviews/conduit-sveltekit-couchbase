@@ -1,0 +1,30 @@
+volumes:
+  couchbase_data:
+
+services:
+  couchbase:
+    build:
+      context: .
+      dockerfile: Dockerfile.couchbase
+    container_name: couchbase
+    volumes:
+      - couchbase_data:/opt/couchbase/var
+    ports:
+      - 8091-8096:8091-8096
+      - 11210:11210
+      - 5173:5173
+      - 24678:24678
+    env_file: "../.env"
+  
+  conduit-app:
+    image: mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
+    container_name: conduit-app
+    volumes:
+      - ..:/workspace:cached
+    command: sleep infinity
+    network_mode: service:couchbase
+    env_file: "../.env"
+    environment:
+      NODE_ENV: development
+    depends_on:
+      - couchbase

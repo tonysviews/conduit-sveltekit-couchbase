@@ -1,5 +1,5 @@
 import { error, fail, redirect } from '@sveltejs/kit';
-import * as api from '$lib/api.js';
+import API from '$lib/api.js';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
@@ -8,12 +8,12 @@ export async function load({ locals }) {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-	default: async ({ locals, request }) => {
+	default: async ({ fetch, locals, request }) => {
 		if (!locals.user) error(401);
 
 		const data = await request.formData();
 
-		const result = await api.post(
+		const result = await API(fetch).post(
 			'articles',
 			{
 				article: {

@@ -1,5 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
-import * as api from '$lib/api.js';
+import API from '$lib/api.js';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ parent }) {
@@ -9,7 +9,7 @@ export async function load({ parent }) {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-	default: async ({ cookies, request }) => {
+	default: async ({ fetch, cookies, request }) => {
 		const data = await request.formData();
 
 		const user = {
@@ -18,7 +18,7 @@ export const actions = {
 			password: data.get('password')
 		};
 
-		const body = await api.post('users', { user });
+		const body = await API(fetch).post('users', { user });
 
 		if (body.errors) {
 			return fail(401, body);

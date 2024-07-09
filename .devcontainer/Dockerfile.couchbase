@@ -1,0 +1,24 @@
+# Use the official Couchbase Community Edition image as the base
+FROM couchbase
+
+# Set environment variables to minimize interaction during installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Copy the initialization script
+COPY init-couchbase.sh /opt/couchbase/bin/init-couchbase.sh
+COPY entrypoint.sh /opt/couchbase/bin/entrypoint.sh
+
+# Make the scripts executable
+RUN chmod +x /opt/couchbase/bin/init-couchbase.sh /opt/couchbase/bin/entrypoint.sh
+
+# Update package list, install curl, and clean up
+RUN apt-get update && \
+    apt-get install -y curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Expose necessary ports (default Couchbase ports)
+EXPOSE 8091 8092 8093 11210
+
+# Set entrypoint to the new entrypoint script
+ENTRYPOINT ["/opt/couchbase/bin/entrypoint.sh"]
