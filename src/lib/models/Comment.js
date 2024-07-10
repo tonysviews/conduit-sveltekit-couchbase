@@ -1,4 +1,6 @@
-import { Schema, getModel } from 'ottoman';
+import { Schema, model } from 'ottoman';
+import { scopeName } from '$lib/constants';
+import User from '$lib/models/User';
 
 const CommentSchema = new Schema(
 	{
@@ -15,7 +17,7 @@ const CommentSchema = new Schema(
 );
 
 CommentSchema.methods.toCommentResponse = async function (user) {
-	let authorObj = await getModel('User').findById(this.author);
+	let authorObj = await User.findById(this.author);
 	return {
 		id: this.id,
 		body: this.body,
@@ -25,4 +27,6 @@ CommentSchema.methods.toCommentResponse = async function (user) {
 	};
 };
 
-export { CommentSchema };
+const Comment = model('Comment', CommentSchema, { scopeName });
+
+export default Comment;

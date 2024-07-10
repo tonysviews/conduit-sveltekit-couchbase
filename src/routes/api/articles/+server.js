@@ -1,26 +1,26 @@
 import { json } from '@sveltejs/kit';
-import { getModel } from 'ottoman';
+import Article from "$lib/models/Article"
+import User from '$lib/models/User'
 
-const Article = getModel('Article');
-const User = getModel('User');
-
-export const GET = async ({ params, locals }) => {
+export const GET = async ({ url, locals }) => {
 	let limit = 20;
 	let offset = 0;
 	let query = {};
 
-	if (params.limit) {
-		limit = params.limit;
+	const params = url.searchParams;
+
+	if (params.get('limit')) {
+		limit = params.get('limit');
 	}
-	if (params.offset) {
-		offset = params.offset;
+	if (params.get('offset')) {
+		offset = params.get('offset');
 	}
-	if (params.tag) {
-		query[`"${params.tag}"`] = { $in: { $field: 'tagList' } };
+	if (params.get('tag')) {
+		query[`"${params.get('tag')}"`] = { $in: { $field: 'tagList' } };
 	}
 
-	if (params.author) {
-		const author = await User.findOne({ username: params.author }).catch((e) => {
+	if (params.get('author')) {
+		const author = await User.findByUsername(params.get('author')).catch((e) => {
 			log.error('Failed to retrieve author', e);
 		});
 		if (author) {
@@ -28,8 +28,8 @@ export const GET = async ({ params, locals }) => {
 		}
 	}
 
-	if (params.favorited) {
-		const favoriter = await User.findOne({ username: params.favorited }).catch((e) => {
+	if (params.get('favorited')) {
+		const favoriter = await User.findbyUsername(params.get('favorited')).catch((e) => {
 			log.error('Failed to retrieve favorites owner', e);
 		});
 		if (favoriter) {
@@ -50,7 +50,9 @@ export const GET = async ({ params, locals }) => {
 	});
 
 	if (locals.user) {
-		const loginUser = await User.findById(locals.user.userId);
+		const loginUser = await User.findByUsername(locals.user.username).catch((e) => {
+			log.error('Failed to retrieve logged in user', e);
+		});
 		const fetchedArticles = await Promise.all(
 			filteredArticles.map(async (article) => {
 				return await article.toArticleResponse(loginUser);

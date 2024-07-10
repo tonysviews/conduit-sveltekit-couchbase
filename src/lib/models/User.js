@@ -1,9 +1,10 @@
-import { Schema, getModel, addValidators } from 'ottoman';
+import { Schema, model } from 'ottoman';
 import jwt from 'jsonwebtoken';
-import accessTokenSecret from '$lib/constants';
-import { PropertyRequiredError } from '$lib/errors';
+import { accessTokenSecret, scopeName } from '$lib/constants';
+import Article from '$lib/models/Article';
 
-const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/;
+const emailPattern =
+	/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 const UserSchema = new Schema(
 	{
@@ -11,7 +12,7 @@ const UserSchema = new Schema(
 			type: String,
 			required: true,
 			unique: true,
-			validator: 'username'
+			index: true
 		},
 		password: {
 			type: String,
@@ -21,7 +22,7 @@ const UserSchema = new Schema(
 			type: String,
 			required: true,
 			unique: true,
-			validator: { regexp: emailPattern, message: 'email invalid' },
+			validator: { regexp: emailPattern, message: 'Invalid email format' },
 			index: true
 		},
 		bio: {
@@ -40,13 +41,15 @@ const UserSchema = new Schema(
 	}
 );
 
+UserSchema.index.findByUsername = { by: 'username', type: 'refdoc' };
+UserSchema.index.findByEmail = { by: 'email', type: 'refdoc' };
+
 UserSchema.methods.generateAccessToken = function () {
 	const accessToken = jwt.sign(
 		{
 			user: {
-				id: this.id,
-				email: this.email,
-				password: this.password
+				username: this.username,
+				email: this.email
 			}
 		},
 		accessTokenSecret,
@@ -118,7 +121,7 @@ UserSchema.methods.favorite = async function (id) {
 		this.favouriteArticles.push(id);
 	}
 
-	const article = await getModel('Article').findById(id);
+	const article = await Article.findById(id);
 
 	article.favouritesCount += 1;
 	await this.save();
@@ -132,19 +135,13 @@ UserSchema.methods.unfavorite = async function (id) {
 		this.favouriteArticles.splice(idx, 1);
 	}
 
-	const article = await getModel('Article').findById(id);
+	const article = await Article.findById(id);
 	article.favouritesCount -= 1;
 	await this.save();
 
 	return article.save();
 };
 
-addValidators({
-	username: (value) => {
-		if (value && /\s/g.test(value)) {
-			throw new PropertyRequiredError('username');
-		}
-	}
-});
+const User = model('User', UserSchema, { scopeName });
 
-export { UserSchema };
+export default User;

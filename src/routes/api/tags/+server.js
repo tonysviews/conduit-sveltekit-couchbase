@@ -1,7 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { getModel } from 'ottoman';
-
-const Article = getModel('Article');
+import Article from '$lib/models/Article';
 
 export const GET = async () => {
 	const tags = await Article.find(

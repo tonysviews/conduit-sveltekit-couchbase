@@ -81,7 +81,7 @@ couchbase_cli collection-manage \
   --username $COUCHBASE_ADMIN \
   --password $COUCHBASE_ADMIN_PASSWORD \
   --bucket $COUCHBASE_BUCKET \
-  --create-collection $COUCHBASE_SCOPE.articles
+  --create-collection $COUCHBASE_SCOPE.Article
 echo
 
 echo "Creating Users collection"
@@ -90,7 +90,7 @@ couchbase_cli collection-manage \
   --username $COUCHBASE_ADMIN \
   --password $COUCHBASE_ADMIN_PASSWORD \
   --bucket $COUCHBASE_BUCKET \
-  --create-collection $COUCHBASE_SCOPE.users
+  --create-collection $COUCHBASE_SCOPE.User
 echo
 
 echo "Creating Comments collection"
@@ -99,7 +99,7 @@ couchbase_cli collection-manage \
   --username $COUCHBASE_ADMIN \
   --password $COUCHBASE_ADMIN_PASSWORD \
   --bucket $COUCHBASE_BUCKET \
-  --create-collection $COUCHBASE_SCOPE.comments
+  --create-collection $COUCHBASE_SCOPE.Comment
 echo
 
 echo "Creating RBAC '$COUCHBASE_USER' user on $COUCHBASE_BUCKET bucket"
