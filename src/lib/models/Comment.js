@@ -1,13 +1,10 @@
 import { Schema, model } from 'ottoman';
-import { scopeName } from '$lib/constants';
+import { scopeName } from '$lib/constants.server';
 import User from '$lib/models/User';
 
 const CommentSchema = new Schema(
 	{
-		body: {
-			type: String,
-			required: true
-		},
+		body: { type: String, required: true },
 		author: { type: String, ref: 'User' },
 		article: { type: String, ref: 'Article' }
 	},

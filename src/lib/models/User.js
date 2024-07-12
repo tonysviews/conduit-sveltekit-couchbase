@@ -1,6 +1,6 @@
 import { Schema, model } from 'ottoman';
 import jwt from 'jsonwebtoken';
-import { accessTokenSecret, scopeName } from '$lib/constants';
+import { accessTokenSecret, scopeName } from '$lib/constants.server';
 import Article from '$lib/models/Article';
 
 const emailPattern =
@@ -41,13 +41,11 @@ const UserSchema = new Schema(
 	}
 );
 
-UserSchema.index.findByUsername = { by: 'username', type: 'refdoc' };
-UserSchema.index.findByEmail = { by: 'email', type: 'refdoc' };
-
 UserSchema.methods.generateAccessToken = function () {
 	const accessToken = jwt.sign(
 		{
 			user: {
+				id: this.id,
 				username: this.username,
 				email: this.email
 			}
@@ -60,6 +58,7 @@ UserSchema.methods.generateAccessToken = function () {
 
 UserSchema.methods.toUserResponse = function () {
 	return {
+		id: this.id,
 		username: this.username,
 		email: this.email,
 		bio: this.bio,
@@ -70,6 +69,7 @@ UserSchema.methods.toUserResponse = function () {
 
 UserSchema.methods.toProfileJSON = function (user) {
 	return {
+		id: this.id,
 		username: this.username,
 		bio: this.bio,
 		image: this.image,

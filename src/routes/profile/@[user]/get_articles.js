@@ -1,5 +1,5 @@
-import API from '$lib/api.js';
-import { page_size } from '$lib/constants.js';
+import API from '$lib/api';
+import { page_size } from '$lib/constants';
 
 export async function get_articles({ fetch, url, params, locals }, type) {
 	const p = +url.searchParams.get('page') || 1;

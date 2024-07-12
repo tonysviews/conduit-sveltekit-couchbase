@@ -1,6 +1,6 @@
 import { Schema, model } from 'ottoman';
 import slugify from 'slugify';
-import { scopeName } from '$lib/constants';
+import { scopeName } from '$lib/constants.server';
 import User from '$lib/models/User';
 
 const ArticleSchema = new Schema(
@@ -47,15 +47,14 @@ ArticleSchema.pre('update', function (document) {
 	document.slug = slugify(document.title, { lower: true, replacement: '-' });
 });
 
-ArticleSchema.index.findBySlug = { by: 'slug', type: 'refdoc' };
-
 ArticleSchema.methods.toArticleResponse = async function (user) {
 	const authorObj = await User.findById(this.author);
 	return {
+		id: this.id,
 		slug: this.slug,
 		articleSlug: this.slug,
 		title: this.title,
-		description: this.description,
+		description: this.description, 
 		body: this.body,
 		createdAt: this.createdAt,
 		updatedAt: this.updatedAt,

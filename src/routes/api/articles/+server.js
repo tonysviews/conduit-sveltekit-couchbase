@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
-import Article from "$lib/models/Article"
-import User from '$lib/models/User'
+import Article from '$lib/models/Article';
+import User from '$lib/models/User';
+import { NotFoundError } from '$lib/errors.js';
 
 export const GET = async ({ url, locals }) => {
 	let limit = 20;
@@ -20,8 +21,8 @@ export const GET = async ({ url, locals }) => {
 	}
 
 	if (params.get('author')) {
-		const author = await User.findByUsername(params.get('author')).catch((e) => {
-			log.error('Failed to retrieve author', e);
+		const author = await User.findOne({ username: params.get('author') }).catch((e) => {
+			console.warn('Failed to retrieve author', e);
 		});
 		if (author) {
 			query.author = author.id;
@@ -29,8 +30,8 @@ export const GET = async ({ url, locals }) => {
 	}
 
 	if (params.get('favorited')) {
-		const favoriter = await User.findbyUsername(params.get('favorited')).catch((e) => {
-			log.error('Failed to retrieve favorites owner', e);
+		const favoriter = await User.findOne({ username: params.get('favorited') }).catch((e) => {
+			console.warn('Failed to retrieve favorites owner', e);
 		});
 		if (favoriter) {
 			query.id = { $in: favoriter.favouriteArticles };
@@ -50,8 +51,8 @@ export const GET = async ({ url, locals }) => {
 	});
 
 	if (locals.user) {
-		const loginUser = await User.findByUsername(locals.user.username).catch((e) => {
-			log.error('Failed to retrieve logged in user', e);
+		const loginUser = await User.findById(locals.user.id).catch((e) => {
+			console.error('Failed to retrieve logged in user', e);
 		});
 		const fetchedArticles = await Promise.all(
 			filteredArticles.map(async (article) => {
@@ -78,5 +79,61 @@ export const GET = async ({ url, locals }) => {
 			},
 			{ status: 200 }
 		);
+	}
+};
+
+export const POST = async ({ request, locals }) => {
+	try {
+		let loggedInUser = locals.user;
+		const { id } = loggedInUser;
+
+		const author = await User.findById(id).catch((e) => {
+			console.warn('Unable to retrieve user with id: ' + id, e);
+		});
+
+		if (!author) {
+			throw NotFoundError('User not found');
+		}
+
+		const { article } = await request.json();
+		const { title, description, body, tagList } = article;
+
+		// confirm data
+		if (!title || !description || !body) {
+			const errors = {};
+			if (!title) {
+				errors.title = "can't be blank";
+			}
+			if (!description) {
+				errors.description = "can't be blank";
+			}
+			if (!body) {
+				errors.body = "can't be blank";
+			}
+			throw new ValidationErrors(errors);
+		}
+
+		const createdArticle = await Article.create({ title, description, body });
+
+		createdArticle.author = id;
+
+		if (Array.isArray(tagList) && tagList.length > 0) {
+			const sortedTags = Array.from(tagList).sort((a, b) => {
+				return a.localeCompare(b);
+			});
+			createdArticle.tagList = sortedTags;
+		}
+
+		const savedArticle = await createdArticle.save();
+
+		return json(
+			{
+				article: await savedArticle.toArticleResponse(author)
+			},
+			{ status: 201 }
+		);
+	} catch (e) {
+		console.error('Failed to create article', e);
+		throw e;
 	}
 };

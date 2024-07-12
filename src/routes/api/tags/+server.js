@@ -2,22 +2,17 @@ import { json } from '@sveltejs/kit';
 import Article from '$lib/models/Article';
 
 export const GET = async () => {
-	const tags = await Article.find(
+	const { rows: articleTags } = await Article.find(
 		{},
 		{ lean: true, select: [{ $distinct: { $field: { name: 'tagList' } } }] }
 	).catch((e) => console.error('Failed to retrieve tags', e));
 
-	const filteredTags = tags.rows
+	const tags = articleTags
 		.flatMap((a) => {
 			return a.tagList;
 		})
 		.filter((value, index, array) => {
 			return array.indexOf(value) === index;
 		});
-	return json(
-		{
-			tags: filteredTags
-		},
-		{ status: 200 }
-	);
+	return json({ tags }, { status: 200 });
 };

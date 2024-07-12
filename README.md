@@ -42,9 +42,8 @@ After installing `Docker` and the [Dev Containers extension for VS Code](vscode:
 
 1. Clone the repo and open it on Visual Studio Code
 2. VS Code should automatically detect that there is a devcontainer configuration and will offer to `Reopen in Container`.  But if not, simply open the `Command Palette` by selecting `View` > `Command Palette` from the VS Code menu bar, then select `Dev Containers: Reopen in Container`.
-3. Once it is open in the devcontainer, run the application by clicking the `Run and Debug` icon at the `Activity bar` of the VS Code window. Select `Show all automatic debug configurations` then click `Node js...` then finally click `Run Script: dev`
+3. Once it is open in the devcontainer, run the application by pressing `F5` on your keyboard or by clicking the `Run and Debug` icon at the `Activity bar` of the VS Code window then click the triangle play button beside `Run App`.
 4. VS Code will automatically show another notification to `Open in Browser`, or alternatively, open your browser and go to: `http://localhost:5173`
-
 
 ### To build and start in prod mode:
 Simply run the following commands: 

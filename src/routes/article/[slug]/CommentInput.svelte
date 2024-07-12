@@ -1,6 +1,6 @@
 <script>
 	import { enhance } from '$app/forms';
-	import { placeholder } from '$lib/constants.js';
+	import { placeholder } from '$lib/constants';
 
 	export let user;
 </script>

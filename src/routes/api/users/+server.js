@@ -1,9 +1,7 @@
 import { json } from '@sveltejs/kit';
 import bcrypt from 'bcrypt';
-import { getModel } from 'ottoman';
-import { ValidationError } from '$lib/errors';
-
-const User = getModel('User');
+import { InternalServerError, ValidationError, ValidationErrors } from '$lib/errors';
+import User from '$lib/models/User';
 
 /** @type {import('@sveltejs/kit').RequestEvent} */
 export const POST = async ({ request }) => {
@@ -12,38 +10,44 @@ export const POST = async ({ request }) => {
 
 		// validate data
 		if (!user) {
-			throw new ValidationError('No user data provided');
+			throw new ValidationError('user data', 'not provided');
 		}
 
 		const { email, username, password } = user;
 		if (!email || !username || !password) {
-			const errors = { message: 'All fields are required' };
-			if (!email) errors['email'] = 'email is required';
-			if (!username) errors['username'] = 'user name is required';
-			if (!password) errors['password'] = 'password is required';
-			return json({ errors: { ...errors } }, { status: 422 });
+			const errors = {};
+			if (!email) {
+				errors.email = "can't be blank";
+			}
+			if (!username) {
+				errors.username = "can't be blank";
+			}
+			if (!password) {
+				errors.password = "can't be blank";
+			}
+			throw new ValidationErrors(errors);
 		}
 
 		// Check for existing user
-		let existingUser;
-		try {
-			 existingUser = await User.findOne({ $or: [{ username }, { email }] });
-		} catch (e) {
+		let existingUser = await User.findOne({ $or: [{ username }, { email }] }).catch((e) => {
 			// do nothing we want user to have unique username and email
-		}
+		});
 
 		if (existingUser) {
-			throw new ValidationError('Username or email already exists');
+			throw new ValidationError('email or username', 'already taken');
 		}
 
 		const passwordHash = await bcrypt.hash(password, 10);
 		const createdUser = await User.create({ username, email, password: passwordHash });
 		if (!createdUser) {
-			throw new Error('Failed to create user');
+			throw InternalServerError('Failed to return created user');
 		}
 		return json({ user: createdUser.toUserResponse() }, { status: 201 });
 	} catch (e) {
 		console.error('Failed to create user', e);
-		return json({ errors: { [e.name]: e.message } }, { status: 422 });
+		if (e instanceof ValidationError || e instanceof ValidationErrors) {
+			return e.toResponse();
+		}
+		throw e;
 	}
 };
