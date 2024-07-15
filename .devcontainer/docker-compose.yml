@@ -1,13 +1,13 @@
 name: realworld
 volumes:
   couchbase_data:
-
 services:
+
   couchbase:
     build:
       context: .
       dockerfile: Dockerfile.couchbase
-    container_name: couchbase
+    container_name: realworld-couchbase
     volumes:
       - couchbase_data:/opt/couchbase/var
     ports:
@@ -18,8 +18,10 @@ services:
     env_file: "../.env"
   
   conduit-app:
-    image: mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
-    container_name: conduit-app
+    build:
+      context: .
+      dockerfile: Dockerfile.conduit-app
+    container_name: realworld-conduit-app
     volumes:
       - ..:/workspace:cached
     command: sleep infinity
