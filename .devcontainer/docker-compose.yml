@@ -1,3 +1,4 @@
+name: realworld
 volumes:
   couchbase_data:
 
