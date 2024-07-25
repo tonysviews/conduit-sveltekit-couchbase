@@ -104,14 +104,14 @@ echo
 
 echo "Creating RBAC '$COUCHBASE_USER' user on $COUCHBASE_BUCKET bucket"
 couchbase_cli user-manage \
+  --cluster localhost \
+  --username $COUCHBASE_ADMIN \
+  --password $COUCHBASE_ADMIN_PASSWORD \
   --set \
   --rbac-username $COUCHBASE_USER \
   --rbac-password $COUCHBASE_PASSWORD \
   --roles "bucket_full_access[$COUCHBASE_BUCKET],scope_admin[$COUCHBASE_BUCKET],bucket_admin[$COUCHBASE_BUCKET]" \
-  --auth-domain local \
-  -c 127.0.0.1 \
-  -u $COUCHBASE_ADMIN \
-  -p $COUCHBASE_ADMIN_PASSWORD
+  --auth-domain local
 echo
 
 echo "Configuration completed!" | tee /dev/fd/3
