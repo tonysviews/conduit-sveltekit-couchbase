@@ -1,5 +1,5 @@
 # Use the official Couchbase Community Edition image as the base
-FROM couchbase
+FROM couchbase:community
 
 # Set environment variables to minimize interaction during installation
 ENV DEBIAN_FRONTEND=noninteractive

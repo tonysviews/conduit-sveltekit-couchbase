@@ -11,10 +11,14 @@ services:
     volumes:
       - couchbase_data:/opt/couchbase/var
     ports:
-      - 8091-8096:8091-8096
-      - 11210:11210
-      - 5173:5173
-      - 24678:24678
+      - 8091:8091 # REST/HTTP
+      #- 8092:8092 # XDCR
+      - 8093:8093 # Query
+      - 8094:8094 # FTS
+      #- 8095:8095 # Analytics
+      #- 8096:8096 # Event
+      #- 8097:8097 # Backup
+      #- 11210:11210 # Memcached
     env_file: "../.env"
   
   conduit-app:

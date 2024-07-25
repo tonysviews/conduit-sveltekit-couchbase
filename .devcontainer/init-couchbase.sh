@@ -102,15 +102,15 @@ couchbase_cli collection-manage \
   --create-collection $COUCHBASE_SCOPE.Comment
 echo
 
-echo "Creating RBAC '$COUCHBASE_USER' user on $COUCHBASE_BUCKET bucket"
-couchbase_cli user-manage \
+echo "Creating '$COUCHBASE_USER' user on $COUCHBASE_BUCKET bucket"
+couchbase-cli user-manage \
   --cluster localhost \
   --username $COUCHBASE_ADMIN \
   --password $COUCHBASE_ADMIN_PASSWORD \
   --set \
   --rbac-username $COUCHBASE_USER \
   --rbac-password $COUCHBASE_PASSWORD \
-  --roles "bucket_full_access[$COUCHBASE_BUCKET],scope_admin[$COUCHBASE_BUCKET],bucket_admin[$COUCHBASE_BUCKET]" \
+  --roles bucket_full_access[*] \
   --auth-domain local
 echo
 

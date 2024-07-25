@@ -15,7 +15,7 @@ const initializeDatabase = async function () {
 	const endpoint = process.env.COUCHBASE_SERVER || 'couchbase://localhost';
 	const username = process.env.COUCHBASE_USER || 'Administrator';
 	const password = process.env.COUCHBASE_PASSWORD || 'password';
-	const bucket = process.env.COUCHBASE_BUCKET || 'default';
+	const bucket = process.env.COUCHBASE_BUCKET || '_default';
 
 	try {
 		await ottoman.connect({
