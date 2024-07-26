@@ -18,7 +18,7 @@ services:
       #- 8095:8095 # Analytics
       #- 8096:8096 # Event
       #- 8097:8097 # Backup
-      #- 11210:11210 # Memcached
+      - 11210:11210 # Memcached
     env_file: "../.env"
   
   conduit-app:
